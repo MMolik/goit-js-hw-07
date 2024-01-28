@@ -1,7 +1,7 @@
 import { galleryItems } from "./gallery-items.js";
 const gallery = document.querySelector(".gallery");
 
-for (let item of galleryItems) {
+const galleryElements = galleryItems.map((item) => {
   const galleryItem = document.createElement("div");
   galleryItem.classList.add("gallery__item");
 
@@ -17,8 +17,12 @@ for (let item of galleryItems) {
 
   galleryLink.appendChild(galleryImage);
   galleryItem.appendChild(galleryLink);
-  gallery.appendChild(galleryItem);
-}
+
+  return galleryItem;
+});
+
+gallery.append(...galleryElements);
+
 gallery.addEventListener("click", (event) => {
   event.preventDefault();
 
@@ -26,9 +30,22 @@ gallery.addEventListener("click", (event) => {
   const isImageClicked = event.target.classList.contains("gallery__image");
 
   if (isImageClicked) {
-    const lightbox = basicLightbox.create(`
+    const lightbox = basicLightbox.create(
+      `
         <img src="${event.target.dataset.source}" width="800" height="600">
-      `);
+      `,
+      {
+        onShow: (instance) => {
+          console.log("Lightbox is shown");
+          // Dodaj kod do wykonania po pokazaniu lightboxa
+        },
+        onClose: (instance) => {
+          console.log("Lightbox is closed");
+          // Dodaj kod do wykonania po zamknięciu lightboxa
+          window.removeEventListener("keydown", closeLightboxOnEsc);
+        },
+      }
+    );
 
     lightbox.show();
 
